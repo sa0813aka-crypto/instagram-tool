@@ -15,3 +15,10 @@ test('その他は自由入力から生成し、空白は拒否する',()=>{
  assert.ok(generatePlan({...base,format:'reel',purpose:'other',purposeOther:'シェアしてほしい'}).cta.includes('シェア'));
  assert.throws(()=>generatePlan({...base,format:'feed',purpose:'other',purposeOther:'  '}));
 });
+test('複数行の詳細を本文に反映し、画像の提案にデザインを含める',()=>{
+ for(const format of ['feed','reel']){
+ const p=generatePlan({...base,format,theme:'朝のケア\n洗顔はやさしく\n保湿する\n日焼け止めを使う',designStyle:'すっきりした図解',designColors:'青と白',designReference:'写真は下半分'});
+ assert.ok(!p.title.includes('\n'));assert.ok(p.caption.includes('日焼け止めを使う'));assert.ok(p.designGuide.includes('青と白'));
+ assert.ok((p.pages||p.scenes).every(x=>x.image.includes('写真は下半分')));
+ }
+});
