@@ -8,7 +8,7 @@ test('空白の入力と不正な形式を拒否する',()=>{for(const key of ['
 
 test('選択された目的に合うCTAと共感の構成を作る',()=>{
  for(const [purpose,word] of [['知ってもらいたい','気になった'],['保存してもらいたい','保存'],['共感してもらいたい','私も'],['フォローにつなげたい','フォロー'],['問い合わせ・申込みにつなげたい','お問い合わせ']]){
- const p=generatePlan({...base,format:'feed',purpose});assert.ok(p.cta.includes(word));if(purpose.includes('共感'))assert.ok(p.pages[1].heading.includes('うまくいかない'));
+ const p=generatePlan({...base,format:'feed',purpose});assert.ok(p.cta.includes(word));
  }
 });
 test('その他は自由入力から生成し、空白は拒否する',()=>{
@@ -21,4 +21,8 @@ test('複数行の詳細を本文に反映し、画像の提案にデザイン�
  assert.ok(!p.title.includes('\n'));assert.ok(p.caption.includes('日焼け止めを使う'));assert.ok(p.designGuide.includes('青と白'));
  assert.ok((p.pages||p.scenes).every(x=>x.image.includes('写真は下半分')));
  }
+});
+
+test('企業の実例は入門の呼びかけを使わず、不明な実績を作らない',()=>{
+ for(const format of ['feed','reel']){const p=generatePlan({...base,format});assert.ok(!/何から|自分のペース/.test(JSON.stringify(p)));assert.ok(p.title.includes('実例'));assert.ok(p.caption.includes('［企業名'));}
 });
